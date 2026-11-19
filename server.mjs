@@ -27,7 +27,14 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   const rawUrl = req.url || '/';
-  const pathname = decodeURIComponent(rawUrl.split('?')[0]);
+  let pathname = '/';
+  try {
+    pathname = decodeURIComponent(rawUrl.split('?')[0]);
+  } catch {
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Bad Request');
+    return;
+  }
 
   if (pathname === '/health' || pathname === '/healthz') {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -70,8 +77,13 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(filePath).pipe(res);
 });
 
+server.on('error', (err) => {
+  console.error('Server error:', err);
+  process.exit(1);
+});
+
 server.listen(port, '0.0.0.0', () => {
-  console.log(`Silovy denik server listening on http://0.0.0.0:${port}`);
+  console.log(`Silovy denik server listening on http://0.0.0.0:${port} (dist exists: ${fs.existsSync(indexFile)})`);
 });
 
 const shutdown = () => {

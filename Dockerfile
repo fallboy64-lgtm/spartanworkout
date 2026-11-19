@@ -1,24 +1,18 @@
-# Stage 1: Build frontend with Node 22 (Debian slim for full native Tailwind v4 compatibility)
-FROM node:22-slim AS builder
+FROM node:22-slim
 
 WORKDIR /app
 
+# Install dependencies and build the Vite frontend
 COPY package.json ./
 RUN npm install --no-audit --no-fund
 
 COPY . .
-RUN npm run build
+RUN npm run build && chown -R node:node /app
 
-# Stage 2: Minimal runtime image (no devDependencies or build tools needed)
-FROM node:22-slim AS runner
-
-WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/server.mjs ./server.mjs
-COPY --from=builder /app/package.json ./package.json
+USER node
 
 EXPOSE 3000
 
