@@ -1,0 +1,6 @@
+{
+  "name": "Silový deník",
+  "description": "Přehledný plánovač a deník silových tréninků v češtině s ukládáním v prohlížeči.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
